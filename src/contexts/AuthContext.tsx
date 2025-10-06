@@ -104,13 +104,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loadProfile = async (userId: string) => {
     try {
+      console.log('Loading profile for user:', userId);
       const { data, error } = await supabase
         .from('user_profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle();
 
-      if (error) throw error;
+      console.log('Profile query result:', { data, error });
+
+      if (error) {
+        console.error('Profile query error:', error);
+        throw error;
+      }
+
+      if (!data) {
+        console.warn('No profile found for user:', userId);
+      }
+
       setProfile(data);
     } catch (error) {
       console.error('Error loading profile:', error);
